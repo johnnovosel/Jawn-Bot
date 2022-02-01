@@ -1,4 +1,5 @@
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+import { Config } from "./Config.js";
 
 export default class Summoner {
     puuid;
@@ -12,7 +13,7 @@ export default class Summoner {
         try {
             const response = await fetch('https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/' + this.puuid +  '/ids?start=0&count=1', {
             headers: {
-                "X-Riot-Token": ""
+                "X-Riot-Token": Config.riotToken
             }
         })
         data = await response.json();

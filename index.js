@@ -1,6 +1,7 @@
 import { Client, Intents } from 'discord.js'
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 import Summoner from './Summoner.js';
+import { Config } from "./Config.js";
 
 const client = new Client({
   intents: [
@@ -23,7 +24,7 @@ client.on("message", msg => {
 });
 
 
-client.login(process.env.BOT_TOKEN ?? "");
+client.login(Config.discordToken ?? "");
 
 // async function getUser() {
 //     try {
