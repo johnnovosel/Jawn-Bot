@@ -3,15 +3,27 @@ import { Config } from "./Config.js";
 
 export default class Summoner {
     puuid;
+    summonerId;
     latestGame;
-    constructor(puuid) {
+    playerName;
+    wins;
+    losses;
+    lp;
+    discordID;
+    constructor(puuid, name, id, did) {
         this.puuid = puuid;
+        this.playerName = name;
+        this.summonerId = id;
+        this.wins = 0;
+        this.losses = 0;
+        this.lp = 0;
+        this.discordID = did;
     }
 
-    async getLastestGame() {
+    async getSummonerInfo() {
         let data;
         try {
-            const response = await fetch('https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/' + this.puuid +  '/ids?start=0&count=1', {
+            const response = await fetch('https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/' + this.summonerId, {
             headers: {
                 "X-Riot-Token": Config.riotToken
             }
@@ -20,6 +32,6 @@ export default class Summoner {
           } catch (error) {
             console.error(error);
         }
-        this.latestGame = data[0]
+        return data[1] 
     }
 }
