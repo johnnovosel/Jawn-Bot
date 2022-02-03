@@ -43,14 +43,13 @@ async function initalizePlayers() {
 async function getGames() {
   console.log("Checking for games")
   const games = await Promise.all(playerObjArray.map(obj => obj.getSummonerInfo()))
-  console.log(games)
   for(let i = 0; i < playerObjArray.length; i++) {
     if(games[i] === undefined) continue;
     if(playerObjArray[i].wins === games[i].wins && playerObjArray[i].losses === games[i].losses) continue;
     
-    if(playerObjArray[i].wins > games[i].wins) {
+    if(games[i].wins > playerObjArray[i].wins) {
       console.log(`GAME WON BY ` + playerObjArray[i].playerName + `\n` + `HOMIE GAINED ` + (games[i].leaguePoints - playerObjArray[i].lp) + ` LP!!`)
-      client.channels.cache.get('125385898593484800').send(`GAME WON BY <@${playerObjArray[i].discordID}>` + `\n` + `HOMIE GAINED ` + (games[i].leaguePoints - playerObjArray[i].lp) + ` LP!!`)
+      client.channels.cache.get('125385898593484800').send(`<@${playerObjArray[i].discordID}> got carried and won` + (games[i].leaguePoints - playerObjArray[i].lp) + ` LP!!`)
 
       playerObjArray[i].lp = games[i].leaguePoints
       playerObjArray[i].wins = games[i].wins
@@ -66,7 +65,7 @@ async function getGames() {
       ╭┛╰━━╯┗━━━╮
       ┃┃    ┏━╭╰╯╮
       ┃┃    ┃┏┻━━┻┓
-      ╰┫ ╭╮ ┃┃ ${playerObjArray[i].lp - games[i].leaguePoints}          ┃
+      ╰┫ ╭╮ ┃┃ ${games[i].leaguePoints - playerObjArray[i].lp}           ┃
        ┃ ┃┃ ┃╰━━━━╯
       ╭┛ ┃┃ ┗-╮`)
 
