@@ -10,6 +10,7 @@ export default class Summoner {
     losses;
     lp;
     discordID;
+    dailyGains;
     constructor(puuid, name, id, did) {
         this.puuid = puuid;
         this.playerName = name;
@@ -18,6 +19,7 @@ export default class Summoner {
         this.losses = 0;
         this.lp = 0;
         this.discordID = did;
+        this.dailyGains = 0;
     }
 
     async getSummonerInfo() {
@@ -27,11 +29,11 @@ export default class Summoner {
             headers: {
                 "X-Riot-Token": Config.riotToken
             }
-        })
+        });
         data = await response.json();
-          } catch (error) {
+        } catch (error) {
             console.error(error);
         }
-        return data[1] 
+        return data[0]?.queueType === 'RANKED_SOLO_5x5' ? data[0] : data[1];
     }
 }
