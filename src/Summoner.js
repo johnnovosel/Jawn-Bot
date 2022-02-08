@@ -10,7 +10,9 @@ export default class Summoner {
     losses;
     lp;
     discordID;
-    dailyGains;
+    dailyGains;  // Cumulitive LP
+    currentTier; //"PLAT"
+    currentRank; //"IV"
     constructor(puuid, name, id, did) {
         this.puuid = puuid;
         this.playerName = name;
@@ -18,22 +20,21 @@ export default class Summoner {
         this.wins = 0;
         this.losses = 0;
         this.lp = 0;
-        this.discordID = did;
         this.dailyGains = 0;
+        this.discordID = did;
     }
 
     async getSummonerInfo() {
-        let data;
         try {
             const response = await fetch('https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/' + this.summonerId, {
             headers: {
                 "X-Riot-Token": Config.riotToken
             }
         });
-        data = await response.json();
+        let data = await response.json();
+        return data[0]?.queueType === 'RANKED_SOLO_5x5' ? data[0] : data[1];
         } catch (error) {
             console.error(error);
         }
-        return data[0]?.queueType === 'RANKED_SOLO_5x5' ? data[0] : data[1];
     }
 }
