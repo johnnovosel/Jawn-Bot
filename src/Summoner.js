@@ -1,6 +1,3 @@
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-import { Config } from "./Config.js";
-
 export default class Summoner {
     puuid;
     summonerId;
@@ -22,19 +19,22 @@ export default class Summoner {
         this.lp = 0;
         this.dailyGains = 0;
         this.discordID = did;
-    }
-
-    async getSummonerInfo() {
-        try {
-            const response = await fetch('https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/' + this.summonerId, {
-            headers: {
-                "X-Riot-Token": Config.riotToken
-            }
-        });
-        let data = await response.json();
-        return data[0]?.queueType === 'RANKED_SOLO_5x5' ? data[0] : data[1];
-        } catch (error) {
-            console.error(error);
-        }
+        this.currentRank = "IV";
+        this.currentTier = "IRON"
+        this.latestGame = null;
     }
 }
+//     async getSummonerInfo() {
+//         try {
+//             const response = await fetch('https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/' + this.summonerId, {
+//             headers: {
+//                 "X-Riot-Token": Config.riotToken
+//             }
+//         });
+//         let data = await response.json();
+//         return data[0]?.queueType === 'RANKED_SOLO_5x5' ? data[0] : data[1];
+//         } catch (error) {
+//             console.error(error);
+//         }
+//     }
+// }
