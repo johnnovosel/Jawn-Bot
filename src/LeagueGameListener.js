@@ -6,10 +6,10 @@ let client = null;
 
 const playerArr = [
   new Summoner("4syrFzdJLlvBW920mWb0jhtyZ0hydmxHia1nhkVWjZvGr1S9q0iaBlBCID_bQSZgZTs1sUCVflD6kw", "Itkovi", "AtaRIHyOIWfo3h_mU9NR0i-yaTqplS4gMuOWZIT4yGoF7I8", "166687107073572864"),
-  // new Summoner("umkbzSZkpZfXuLtwvnwEtPSOzbQkmJTMq7q8-uCFTDrtALaU0AKElqwugPZLuONYpLAt4rBYJT7_KA", "Cuckologist", "65oX0mYOLrvVz9EzLN-5hD6LP2664buuv-x2x0-w9tzLlnU", "168216574052925440"),
-  // new Summoner("Yid1_4VUGDmpe3-G_UUx0zO3QTSuAJGe0Qa5WsOqNLhI99CYgGct7uYVDQ4TywcxYuu_ggEmIE4Ogg", "Ferdora", "JpIARXJ0o2cwrB6A18N2zZMFnpU_le73qRHKi8gX3zTzn08", "125385861117378563"),
-  // new Summoner("g_1vGduAkjuonCMStnDs1LJEcnweJakngrEV6VqJOormAwNh2XtGrerSz6nrNN48xaiKLZsanuu3tA", "Call Me Lesh", "3fJjX7CeHt27QGTDCQRNkTAM2xI7XBJir4H-jGflJUZeSWc", "174565240883642369"),
-  // new Summoner("_dxORv64WpvdgMg4XlrrYz5ez6I_osZP0cD7ivHFD2II8zA50j91CceYkQO0-YC8Wg0kgUdrt0M_Vw", "Itko", "ry5t2mMLTsuwDKyB44XJIIp4aXOQ5sSSqZtkX2kOyBji5Ls", "166687107073572864")
+  new Summoner("umkbzSZkpZfXuLtwvnwEtPSOzbQkmJTMq7q8-uCFTDrtALaU0AKElqwugPZLuONYpLAt4rBYJT7_KA", "Cuckologist", "65oX0mYOLrvVz9EzLN-5hD6LP2664buuv-x2x0-w9tzLlnU", "168216574052925440"),
+  new Summoner("Yid1_4VUGDmpe3-G_UUx0zO3QTSuAJGe0Qa5WsOqNLhI99CYgGct7uYVDQ4TywcxYuu_ggEmIE4Ogg", "Ferdora", "JpIARXJ0o2cwrB6A18N2zZMFnpU_le73qRHKi8gX3zTzn08", "125385861117378563"),
+  new Summoner("g_1vGduAkjuonCMStnDs1LJEcnweJakngrEV6VqJOormAwNh2XtGrerSz6nrNN48xaiKLZsanuu3tA", "Call Me Lesh", "3fJjX7CeHt27QGTDCQRNkTAM2xI7XBJir4H-jGflJUZeSWc", "174565240883642369"),
+  new Summoner("_dxORv64WpvdgMg4XlrrYz5ez6I_osZP0cD7ivHFD2II8zA50j91CceYkQO0-YC8Wg0kgUdrt0M_Vw", "Itko", "ry5t2mMLTsuwDKyB44XJIIp4aXOQ5sSSqZtkX2kOyBji5Ls", "166687107073572864")
 ];
 
 // initialize player objects with player information
