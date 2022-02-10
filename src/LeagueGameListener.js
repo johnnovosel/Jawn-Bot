@@ -30,7 +30,7 @@ export default async function initializePlayers(clientPass) {
   client = clientPass
 
   // start listening for any update in the players
-  setInterval(updatePlayerStats, 1000 * 5); // 30 seconds
+  setInterval(updatePlayerStats, 1000 * 30); // 30 seconds
 };
 
 // grab player information
