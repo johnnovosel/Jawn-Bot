@@ -62,11 +62,9 @@ async function updatePlayerStats() {
 
 // check if a player has played a game by checking if losses or wins in ranked 5v5 have increased
 function checkWinLoss(game, player) {
-  game.wins = 80;
-  game.leaguePoints = 99;
     if(player.wins === game.wins && player.losses === game.losses) return; // has not played a game
 
-    const channel = client.channels.cache.get("931418680074596455");
+    const channel = client.channels.cache.get("125385898593484800");
 
     if(game.wins > player.wins) {
       console.log(`GAME WON BY ` + player.playerName + `\n` + `HOMIE GAINED ` + (game.leaguePoints - player.lp) + ` LP!!`);
