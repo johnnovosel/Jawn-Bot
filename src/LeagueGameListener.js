@@ -69,13 +69,13 @@ function checkWinLoss(game, player) {
     if(game.wins > player.wins) {
       console.log(`GAME WON BY ` + player.playerName + `\n` + `HOMIE GAINED ` + (game.leaguePoints - player.lp) + ` LP!!`);
 
-      player.dailyGains = game.leaguePoints - player.lp;
+      player.dailyGains += game.leaguePoints - player.lp;
       channel.send(`Thats a win for ${player.playerName} babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm`);
 
     } else {
       console.log('GAME LOST BY ' + player.playerName + '\n' + "HOMIE LOST " + (player.lp - game.leaguePoints) + ' LP!!');
 
-      player.dailyGains = game.leaguePoints - player.lp;
+      player.dailyGains += game.leaguePoints - player.lp;
       channel.send(`
       ⠀⠀⠀
       ⠀⠀┻-━━━━━━━━━┻╮

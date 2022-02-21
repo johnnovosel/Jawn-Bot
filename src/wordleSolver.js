@@ -44,26 +44,27 @@ function scoreWords(sortedOccuranceMap, wordlesArr) {
 
 export default function start(client) {
   let finalDisplayAnswerArr = []
-  const answer = "shake";
+  const answer = "other";
   const answerArr = answer.split("");
   let wordles = fs.readFileSync("././allowed_words.txt", 'utf-8');
   let wordlesArr = wordles.split(/\n|\,|\r/);
   wordlesArr = wordlesArr.filter(word => {if(word === '') return false; return true})
   let guessNumber = 1;
-  let sortedLetterOccurance = setOccuranceMap(wordlesArr)
   while(guessNumber < 10) {
-    let currentDisplayAnswerArr = [":black_large_square:", ":black_large_square:", ":black_large_square:", ":black_large_square:", ":black_large_square:"];
     if(wordlesArr.length === 1 && wordlesArr[0] === answer) {
       console.log(`found wordle in ${wordlesArr} ${guessNumber - 1} tries`)
       currentDisplayAnswerArr = [":green_square:", ":green_square:", ":green_square:", ":green_square:", ":green_square:"]
       finalDisplayAnswerArr.push(currentDisplayAnswerArr);
-      // displayResults(client, finalDisplayAnswerArr, guessNumber - 1);
+      displayResults(client, finalDisplayAnswerArr, guessNumber);
       break;
     }
 
+
+    let currentDisplayAnswerArr = [":black_large_square:", ":black_large_square:", ":black_large_square:", ":black_large_square:", ":black_large_square:"];
+
+    let sortedLetterOccurance = setOccuranceMap(wordlesArr)
     let scoredWordsMap = scoreWords(sortedLetterOccurance, wordlesArr);
     let guess = null;
-
     scoredWordsMap.forEach((values, keys) => {
       let keyArr = keys.split("")
       let testRepeatedLetterSet = new Set();
@@ -84,14 +85,16 @@ export default function start(client) {
       console.log(`Wordle was ${guess} found in ${guessNumber}`);
       currentDisplayAnswerArr = [":green_square:", ":green_square:", ":green_square:", ":green_square:", ":green_square:"]
       finalDisplayAnswerArr.push(currentDisplayAnswerArr);
-      // displayResults(client, finalDisplayAnswerArr, guessNumber);
+      displayResults(client, finalDisplayAnswerArr, guessNumber);
       break;
     }
 
     console.log(guess)
 
     let guessArr = guess.split("");
-    
+    let notAtThisSpotButInWord = []
+    let containsSet = new Set();
+    let removeSet = new Set();
     let matchMap = [];
 
     for(let i = 0; i < guessArr.length; i++) {
@@ -110,13 +113,9 @@ export default function start(client) {
         }       
       }
       return passed;
-    }) 
+    })
 
-    let notAtThisSpotButInWord = []
-
-    let containsSet = new Set();
-    let removeSet = new Set();
-
+    // get a list of letters in the word and letters not in the word
     for(let i = 0; i < guessArr.length; i++) {
       if(answerArr.includes(guessArr[i])) {
         containsSet.add(guessArr[i]);
@@ -132,53 +131,66 @@ export default function start(client) {
       }
     }
 
+    // filter the word list of invalid words
     wordlesArr = wordlesArr.filter(word => {
       let wordArr = word.split("");
       let passed = true;
 
+      // letter is in the word but not at this spot
       for(let i = 0; i < notAtThisSpotButInWord.length; i++) {
         if(wordArr[notAtThisSpotButInWord[i][1]] == notAtThisSpotButInWord[i][0])
           passed = false;
       }
-      return passed;
-    }) 
 
-    wordlesArr = wordlesArr.filter(word => {
-      let passed = true;
-      containsSet.forEach((letter) => {
-        if(!word.includes(letter)) {
-          passed = false;
-        }
-      })
-      return passed;
-    })
-
-    wordlesArr = wordlesArr.filter(word => {
-      let passed = true;
+      // word contains a letter it should not
       removeSet.forEach((letter) => {
         if(word.includes(letter)) {
           passed = false;
         }
       })
+
+      // word does not contain a letter it should
+      containsSet.forEach((letter) => {
+        if(!word.includes(letter)) {
+          passed = false;
+        }
+      })
+
       return passed;
-    })
+    }) 
 
     guessNumber++;
     finalDisplayAnswerArr.push(currentDisplayAnswerArr);
-    console.log(currentDisplayAnswerArr)
   }
+
+  return guessNumber;
 }
 
-// function displayResults(client, results, number) {
-//     const channel = client.channels.cache.get("942513309519847434");
-//     console.log(results);
+function displayResults(client, results, number) {
+    const channel = client.channels.cache.get("931418680074596455");
 
-//     let message = `Wordle 243 ${number}/6\n\n`
-//     for(let i = 0; i < results.length; i++) {
-//         message = message +results[i][0]+results[i][1]+results[i][2]+results[i][3]+results[i][4] + '\n';
-//     }
-//     channel.send(message);
-// } 
+    let message = `Beep Boop that word was easy!\n\nWordle 247 ${number}/6\n\n`
+    // let message = "Beep Boop matt smells like poop\n"
+    for(let i = 0; i < results.length; i++) {
+        message = message +results[i][0]+results[i][1]+results[i][2]+results[i][3]+results[i][4] + '\n';
+    }
+    channel.send(message);
+} 
+
+function test() {
+  let wordles = fs.readFileSync("././Wordles.txt", 'utf-8');
+  let wordlesArr = wordles.split(/\n|\,|\r/);
+  wordlesArr = wordlesArr.filter(word => {if(word === '') return false; return true})
+  let count = 0;
+  let size = wordlesArr.length;
+
+  for(let i = 0; i < wordlesArr.length; i++) {
+    console.log(count)
+    count += start(wordlesArr[i]);
+  }
+
+  console.log(`Average: ${count / size}`);
+}
 
 function arrayAlreadyHasArray(arr, subarr){
   for(var i = 0; i<arr.length; i++){
@@ -197,3 +209,5 @@ function arrayAlreadyHasArray(arr, subarr){
   }
   return false
 }
+
+// test();
