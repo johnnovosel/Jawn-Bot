@@ -43,7 +43,7 @@ client.on("ready", async () => {
 
   LeagueListener(client);
   startTimer();
-  startSearch(client);
+//   startSearch(client);
 });
 
 client.login(Config.discordToken ?? "");
