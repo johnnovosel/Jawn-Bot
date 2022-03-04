@@ -25,9 +25,9 @@ export default async function initializePlayers(clientPass) {
     playerArr[i].currentTier = games[i].tier;
     playerArr[i].lp = games[i].leaguePoints;
   }
-  console.log(playerArr)
+  console.table(playerArr);
 
-  client = clientPass
+  client = clientPass;
 
   // start listening for any update in the players
   setInterval(updatePlayerStats, 1000 * 30); // 30 seconds
@@ -43,8 +43,10 @@ async function getSummonerInfo(summonerId) {
     });
     let data = await response.json();
     return data[0]?.queueType === 'RANKED_SOLO_5x5' ? data[0] : data[1];
+
   } catch (error) {
     console.error(error);
+    console.log("Caused by ", error.cause)
     return null;
   }
 }
@@ -52,17 +54,16 @@ async function getSummonerInfo(summonerId) {
 // check every 30 seconds and compare to current player data
 // if there is a change take appropriate action
 async function updatePlayerStats() {
-  console.log("Checking for games");
   const games = await Promise.all(playerArr.map(obj => getSummonerInfo(obj.summonerId)));
   for(let i = 0; i < playerArr.length; i++) {
-    if(games[i] === undefined) continue; //this dude hasn't played any ranked 5v5 games this season
+    if(games[i] === null || games[i] === undefined) continue; //this dude hasn't played any ranked 5v5 games this season
     checkWinLoss(games[i], playerArr[i]);
   }
 }
 
 // check if a player has played a game by checking if losses or wins in ranked 5v5 have increased
 function checkWinLoss(game, player) {
-    if(player.wins === game.wins && player.losses === game.losses) return; // has not played a game
+    if(player.wins === game.wins && player.losses === game?.losses) return; // has not played a game
 
     const channel = client.channels.cache.get("125385898593484800");
 
@@ -70,7 +71,7 @@ function checkWinLoss(game, player) {
       console.log(`GAME WON BY ` + player.playerName + `\n` + `HOMIE GAINED ` + (game.leaguePoints - player.lp) + ` LP!!`);
 
       player.dailyGains += game.leaguePoints - player.lp;
-      channel.send(`Thats a win for ${player.playerName} babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm`);
+      channel.send(`Thats a win for <@${player.discordID}> babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm`);
 
     } else {
       console.log('GAME LOST BY ' + player.playerName + '\n' + "HOMIE LOST " + (player.lp - game.leaguePoints) + ' LP!!');
@@ -81,11 +82,11 @@ function checkWinLoss(game, player) {
       ⠀⠀┻-━━━━━━━━━┻╮
        ┃╭╮╭╮┃
       ╭┫▕▎▕▎┣╮
-      ╰┓┳╰╯┳┏╯    For You ${player.playerName}
+      ╰┓┳╰╯┳┏╯    For You <@${player.discordID}>
       ╭┛╰━━╯┗━━━╮
       ┃┃    ┏━╭╰╯╮
       ┃┃    ┃┏┻━━┻┓
-      ╰┫ ╭╮ ┃┃ ${game.leaguePoints - player.lp} lp     ┃
+      ╰┫ ╭╮ ┃┃ ${game.leaguePoints - player.lp} lp       ┃
        ┃ ┃┃ ┃╰━━━━╯
       ╭┛ ┃┃ ┗-╮
 
