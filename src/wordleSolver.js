@@ -50,7 +50,7 @@ function scoreWords(sortedOccuranceMap, wordlesArr) {
 
 export default async function start(client) {
   let finalDisplayAnswerArr = []
-  const answer = "mourn";
+  const answer = "month";
   const answerArr = answer.split("");
   let wordles = fs.readFileSync("././allowed_words.txt", 'utf-8');
   let wordlesArr = wordles.split(/\n|\,|\r/);
@@ -209,8 +209,10 @@ async function findMostCommon(word) {
 function displayResults(client, results, number) {
   const channel = client.channels.cache.get(Config.cobaltiumWordleChannel);
 
-  let message = `Rise of the machine\n\nWordle 256 ${number}/6\n\n`
-  // let message = "Beep Boop matt smells like poop\n"
+  // const image = fs.readFileSync('C:\\Users\\johnn\\Desktop\\cringe.jpg')
+
+  // let message = `A new class system exists.\n\nNo longer is it admin vs men.\n\nIt is <@&950513850233548871> vs <@&950513369180422194>`
+  let message = `Cortini is hotter than sam\n\nWordle 262 ${number}/6\n\n`
   for (let i = 0; i < results.length; i++) {
     message = message + results[i][0] + results[i][1] + results[i][2] + results[i][3] + results[i][4] + '\n';
   }

@@ -4,12 +4,13 @@ import LeagueListener from './LeagueGameListener.js';
 import fs from 'fs';
 import { startTimer } from './commands/lookup.js';
 import startSearch from './wordleSolver.js';
+import assignRole from './AssignRole.js'
 
 const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MESSAGES
   ],
 });
 
@@ -43,6 +44,7 @@ client.on("ready", async () => {
 
   LeagueListener(client);
   startTimer();
+//   assignRole(client);
 //   startSearch(client);
 });
 
