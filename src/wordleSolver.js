@@ -50,7 +50,7 @@ function scoreWords(sortedOccuranceMap, wordlesArr) {
 
 export default async function start(client) {
   let finalDisplayAnswerArr = []
-  const answer = "month";
+  const answer = "lapse";
   const answerArr = answer.split("");
   let wordles = fs.readFileSync("././allowed_words.txt", 'utf-8');
   let wordlesArr = wordles.split(/\n|\,|\r/);
