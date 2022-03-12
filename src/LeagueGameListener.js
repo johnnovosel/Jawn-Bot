@@ -56,14 +56,14 @@ async function getSummonerInfo(summonerId) {
 async function updatePlayerStats() {
   const games = await Promise.all(playerArr.map(obj => getSummonerInfo(obj.summonerId)));
   for(let i = 0; i < playerArr.length; i++) {
-    if(games[i] === null || games[i] === undefined) continue; //this dude hasn't played any ranked 5v5 games this season
+    if(games[i] === null || games[i] === undefined) continue; //this dude hasn't played any ranked 5v5 games this season OR THERE was an error on api call so we can just wait 30 more seconds
     checkWinLoss(games[i], playerArr[i]);
   }
 }
 
 // check if a player has played a game by checking if losses or wins in ranked 5v5 have increased
 function checkWinLoss(game, player) {
-    if(player.wins === game.wins && player.losses === game?.losses) return; // has not played a game
+    if(player.wins === game.wins && player.losses === game.losses) return; // has not played a game
 
     const channel = client.channels.cache.get("125385898593484800");
 
