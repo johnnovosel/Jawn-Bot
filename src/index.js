@@ -43,8 +43,8 @@ client.on('interactionCreate', async interaction => {
 client.on("ready", async () => {
   console.log("Bot started");
 
-//   LeagueListener(client);
-//   startTimer();
+  LeagueListener(client);
+  startTimer();
 //   assignRole(client);
 //   startSearch(client);
 });
