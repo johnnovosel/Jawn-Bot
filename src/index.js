@@ -5,6 +5,7 @@ import fs from 'fs';
 import { startTimer } from './commands/lookup.js';
 import startSearch from './wordleSolver.js';
 import assignRole from './AssignRole.js'
+import { channel } from 'diagnostics_channel';
 
 const client = new Client({
   intents: [
@@ -42,11 +43,21 @@ client.on('interactionCreate', async interaction => {
 client.on("ready", async () => {
   console.log("Bot started");
 
-  LeagueListener(client);
-  startTimer();
+//   LeagueListener(client);
+//   startTimer();
 //   assignRole(client);
 //   startSearch(client);
 });
+
+client.on("messageDelete", function(message) {
+	if (message.author.username != 'BigJohn') return;
+
+	let content = message.content;
+
+	const channel = client.channels.cache.get(message.channelId);
+
+	channel.send(`For every message deleted, 2 shall take its place\n${content}\n${content}`);
+})
 
 client.login(Config.discordToken ?? "");
 
