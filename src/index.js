@@ -50,7 +50,7 @@ client.on("ready", async () => {
 });
 
 client.on("messageDelete", function(message) {
-	if (message.author.username != 'BigJohn') return;
+	if (message.author.username != 'JawnBot') return;
 
 	let content = message.content;
 
