@@ -56,8 +56,9 @@ client.on("messageDelete", function(message) {
 
 	const channel = client.channels.cache.get(message.channelId);
 
-	channel.send(`For every message deleted, 2 shall take its place'\n${content}`);
-	channel.send(`For every message deleted, 2 shall take its place'\n${content}`);
+	channel.send(`For every message deleted, 2 shall take its place`);
+	channel.send(`\n${content}`);
+	channel.send(`\n${content}`);
 })
 
 client.login(Config.discordToken ?? "");
