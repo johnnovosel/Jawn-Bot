@@ -1,6 +1,6 @@
 import { Client, Intents, Collection } from 'discord.js';
 import { Config } from "./Config.js";
-import LeagueListener from './LeagueGameListener.js';
+import LeagueListener from './leaguelistener/LeagueGameListener.js'
 import fs from 'fs';
 import { startTimer } from './commands/lookup.js';
 import startSearch from './wordleSolver.js';
@@ -56,7 +56,8 @@ client.on("messageDelete", function(message) {
 
 	const channel = client.channels.cache.get(message.channelId);
 
-	channel.send(`For every message deleted, 2 shall take its place\n${content}\n${content}`);
+	channel.send(`For every message deleted, 2 shall take its place'\n${content}`);
+	channel.send(`For every message deleted, 2 shall take its place'\n${content}`);
 })
 
 client.login(Config.discordToken ?? "");

@@ -1,6 +1,6 @@
 import Summoner from './Summoner.js';
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-import { Config } from "./Config.js";
+import { Config } from "../Config.js";
 
 let client = null;
 
