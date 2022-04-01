@@ -1,8 +1,6 @@
 import Summoner from './Summoner.js';
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 import { Config } from "../Config.js";
-
-let client = null;
 
 const playerArr = [
   new Summoner("4syrFzdJLlvBW920mWb0jhtyZ0hydmxHia1nhkVWjZvGr1S9q0iaBlBCID_bQSZgZTs1sUCVflD6kw", "Itkovi", "AtaRIHyOIWfo3h_mU9NR0i-yaTqplS4gMuOWZIT4yGoF7I8", "166687107073572864"),
@@ -14,11 +12,11 @@ const playerArr = [
 ];
 
 // initialize player objects with player information
-export default async function initializePlayers(clientPass) {
-  const games = await Promise.all(playerArr.map(obj => getSummonerInfo(obj.summonerId)));
-  
+export default async function initializePlayers(client) {
+  let games = await Promise.all(playerArr.map(obj => getSummonerInfo(obj.summonerId)));
+
   for (let i = 0; i < playerArr.length; i++) {
-    if(games[i] === undefined) continue;
+    if (games[i] === undefined) continue;
 
     playerArr[i].wins = games[i].wins;
     playerArr[i].losses = games[i].losses;
@@ -28,11 +26,98 @@ export default async function initializePlayers(clientPass) {
   }
   console.table(playerArr);
 
-  client = clientPass;
-
   // start listening for any update in the players
-  setInterval(updatePlayerStats, 1000 * 30); // 30 seconds
+  setInterval(async () => {
+
+    games = await Promise.all(playerArr.map(obj => getSummonerInfo(obj.summonerId)));
+    console.table(games);
+
+    for (let i = 0; i < playerArr.length; i++) {
+      if (games[i] === null || games[i] === undefined) continue; //this dude hasn't played any ranked 5v5 games this season OR THERE was an error on api call so we can just wait 30 more seconds
+      if (games[i].wins === playerArr[i].wins && games[i].losses === playerArr[i].losses) continue; // if there is no change in win loss
+
+      // else we check the win loss and the div change
+      checkWinLoss(games[i], playerArr[i], client);
+      // check tier / rank change
+    }
+
+  }, 1000 * 5); // 30 seconds
 };
+
+// check if a player has played a game by checking if losses or wins in ranked 5v5 have increased
+function checkWinLoss(game, player, client) {
+
+  const channel = client.channels.cache.get(Config.testChannel);
+
+  let LPDiff = game.leaguePoints - player.lp;
+
+  if (game.wins > player.wins) {
+
+    if (player.streak > 0) {
+      streak++;
+    } else {
+      streak = 1;
+    }
+
+    // rank up
+    if (game.leaguePoints < player.lp) {
+      let difference = 100 - player.lp;
+      LPDiff = difference + game.leaguePoints;
+    }
+
+    player.dailyGains += LPDiff;
+
+    channel.send(`Thats a win for <@${player.discordID}> babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm`);
+
+    console.log(`GAME WON BY ` + player.playerName + `\n` + `HOMIE GAINED ` + (game.leaguePoints - player.lp) + ` LP!!`);
+  } else {
+
+    if (player.streak < 0) {
+      streak--;
+    } else {
+      streak = -1;
+    }
+
+    // ranked down
+    if (game.leaguePoints > player.lp) {
+      let difference = 100 - game.leaguePoints;
+      LPDiff = player.lp + difference;
+    }
+
+    player.dailyGains -= LPDiff;
+
+    channel.send(`
+      ⠀⠀⠀
+      ⠀⠀┻-━━━━━━━━━┻╮
+       ┃╭╮╭╮┃
+      ╭┫▕▎▕▎┣╮
+      ╰┓┳╰╯┳┏╯    For You <@${player.discordID}>
+      ╭┛╰━━╯┗━━━╮
+      ┃┃    ┏━╭╰╯╮
+      ┃┃    ┃┏┻━━┻┓
+      ╰┫ ╭╮ ┃┃ ${game.leaguePoints - player.lp} lp       ┃
+       ┃ ┃┃ ┃╰━━━━╯
+      ╭┛ ┃┃ ┗-╮
+
+      Total daily gains: ${player.dailyGains} lp`);
+
+    console.log('GAME LOST BY ' + player.playerName + '\n' + "HOMIE LOST " + (player.lp - game.leaguePoints) + ' LP!!');
+  }
+
+  player.lp = game.leaguePoints;
+  player.wins = game.wins;
+  player.losses = game.losses;
+}
+
+
+
+
+function checkTierRank() {
+
+}
+
+
+
 
 // grab player information
 async function getSummonerInfo(summonerId) {
@@ -50,51 +135,4 @@ async function getSummonerInfo(summonerId) {
     console.log("Caused by ", error.cause)
     return null;
   }
-}
-
-// check every 30 seconds and compare to current player data
-// if there is a change take appropriate action
-async function updatePlayerStats() {
-  const games = await Promise.all(playerArr.map(obj => getSummonerInfo(obj.summonerId)));
-  for(let i = 0; i < playerArr.length; i++) {
-    if(games[i] === null || games[i] === undefined) continue; //this dude hasn't played any ranked 5v5 games this season OR THERE was an error on api call so we can just wait 30 more seconds
-    checkWinLoss(games[i], playerArr[i]);
-  }
-}
-
-// check if a player has played a game by checking if losses or wins in ranked 5v5 have increased
-function checkWinLoss(game, player) {
-    if(player.wins === game.wins && player.losses === game.losses) return; // has not played a game
-
-    const channel = client.channels.cache.get("125385898593484800");
-
-    if(game.wins > player.wins) {
-      console.log(`GAME WON BY ` + player.playerName + `\n` + `HOMIE GAINED ` + (game.leaguePoints - player.lp) + ` LP!!`);
-
-      player.dailyGains += game.leaguePoints - player.lp;
-      channel.send(`Thats a win for <@${player.discordID}> babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm`);
-
-    } else {
-      console.log('GAME LOST BY ' + player.playerName + '\n' + "HOMIE LOST " + (player.lp - game.leaguePoints) + ' LP!!');
-
-      player.dailyGains += game.leaguePoints - player.lp;
-      channel.send(`
-      ⠀⠀⠀
-      ⠀⠀┻-━━━━━━━━━┻╮
-       ┃╭╮╭╮┃
-      ╭┫▕▎▕▎┣╮
-      ╰┓┳╰╯┳┏╯    For You <@${player.discordID}>
-      ╭┛╰━━╯┗━━━╮
-      ┃┃    ┏━╭╰╯╮
-      ┃┃    ┃┏┻━━┻┓
-      ╰┫ ╭╮ ┃┃ ${game.leaguePoints - player.lp} lp       ┃
-       ┃ ┃┃ ┃╰━━━━╯
-      ╭┛ ┃┃ ┗-╮
-
-      Total daily gains: ${player.dailyGains} lp`);
-    }
-
-    player.lp = game.leaguePoints;
-    player.wins = game.wins;
-    player.losses = game.losses;
 }

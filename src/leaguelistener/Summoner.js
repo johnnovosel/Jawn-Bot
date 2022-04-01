@@ -10,6 +10,7 @@ export default class Summoner {
     dailyGains;  // Cumulitive LP
     currentTier; //"PLAT"
     currentRank; //"IV"
+    streak;
     constructor(puuid, name, id, did) {
         this.puuid = puuid;
         this.playerName = name;
@@ -22,5 +23,6 @@ export default class Summoner {
         this.currentRank = "IV";
         this.currentTier = "IRON"
         this.latestGame = null;
+        this.streak = 0;
     }
 }
