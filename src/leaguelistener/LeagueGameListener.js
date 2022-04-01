@@ -67,7 +67,7 @@ function checkWinLoss(game, player, client) {
 
     player.dailyGains += LPDiff;
 
-    channel.send(`Thats a win for <@${player.discordID}> babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm`);
+    channel.send(`Thats a win for <@${player.discordID}> babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm\n\nStreak: ${player.streak}`);
 
     console.log(`GAME WON BY ` + player.playerName + `\n` + `HOMIE GAINED ` + (game.leaguePoints - player.lp) + ` LP!!`);
   } else {
@@ -99,7 +99,8 @@ function checkWinLoss(game, player, client) {
        ┃ ┃┃ ┃╰━━━━╯
       ╭┛ ┃┃ ┗-╮
 
-      Total daily gains: ${player.dailyGains} lp`);
+      Total daily gains: ${player.dailyGains} lp
+      Streak: ${player.streak}`);
 
     console.log('GAME LOST BY ' + player.playerName + '\n' + "HOMIE LOST " + (player.lp - game.leaguePoints) + ' LP!!');
   }
