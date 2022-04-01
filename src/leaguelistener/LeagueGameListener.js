@@ -30,7 +30,6 @@ export default async function initializePlayers(client) {
   setInterval(async () => {
 
     games = await Promise.all(playerArr.map(obj => getSummonerInfo(obj.summonerId)));
-    console.table(games);
 
     for (let i = 0; i < playerArr.length; i++) {
       if (games[i] === null || games[i] === undefined) continue; //this dude hasn't played any ranked 5v5 games this season OR THERE was an error on api call so we can just wait 30 more seconds
@@ -41,22 +40,22 @@ export default async function initializePlayers(client) {
       // check tier / rank change
     }
 
-  }, 1000 * 5); // 30 seconds
+  }, 1000 * 30); // 30 seconds
 };
 
 // check if a player has played a game by checking if losses or wins in ranked 5v5 have increased
 function checkWinLoss(game, player, client) {
 
-  const channel = client.channels.cache.get(Config.testChannel);
+  const channel = client.channels.cache.get("125385898593484800");
 
   let LPDiff = game.leaguePoints - player.lp;
 
   if (game.wins > player.wins) {
 
     if (player.streak > 0) {
-      streak++;
+      player.streak++;
     } else {
-      streak = 1;
+      player.streak = 1;
     }
 
     // rank up
@@ -64,18 +63,18 @@ function checkWinLoss(game, player, client) {
       let difference = 100 - player.lp;
       LPDiff = difference + game.leaguePoints;
     }
-
+    
     player.dailyGains += LPDiff;
 
-    channel.send(`Thats a win for <@${player.discordID}> babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm\n\nStreak: ${player.streak}`);
+    channel.send(`Thats a win for <@${player.discordID}> babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm\n\nWin streak: ${player.streak}`);
 
     console.log(`GAME WON BY ` + player.playerName + `\n` + `HOMIE GAINED ` + (game.leaguePoints - player.lp) + ` LP!!`);
   } else {
 
     if (player.streak < 0) {
-      streak--;
+      player.streak--;
     } else {
-      streak = -1;
+      player.streak = -1;
     }
 
     // ranked down
@@ -85,6 +84,8 @@ function checkWinLoss(game, player, client) {
     }
 
     player.dailyGains -= LPDiff;
+
+    let positiveStreak = player.streak * -1;
 
     channel.send(`
       ⠀⠀⠀
@@ -100,7 +101,7 @@ function checkWinLoss(game, player, client) {
       ╭┛ ┃┃ ┗-╮
 
       Total daily gains: ${player.dailyGains} lp
-      Streak: ${player.streak}`);
+      Loss streak: ${positiveStreak}`);
 
     console.log('GAME LOST BY ' + player.playerName + '\n' + "HOMIE LOST " + (player.lp - game.leaguePoints) + ' LP!!');
   }
