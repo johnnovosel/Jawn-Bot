@@ -66,7 +66,7 @@ function checkWinLoss(game, player, client) {
     
     player.dailyGains += LPDiff;
 
-    channel.send(`Thats a win for <@${player.discordID}> babyyyyyyy\nTotal daily gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm\n\nWin streak: ${player.streak}`);
+    channel.send(`Thats a win for <@${player.discordID}> babyyyyyyy\nTotal gains: ${player.dailyGains} lp\nhttps://cdn.discordapp.com/attachments/125385898593484800/939006796817907733/half_of_a_rat.webm\n\nWin streak: ${player.streak}`);
 
     console.log(`GAME WON BY ` + player.playerName + `\n` + `HOMIE GAINED ` + (game.leaguePoints - player.lp) + ` LP!!`);
   } else {
@@ -81,9 +81,10 @@ function checkWinLoss(game, player, client) {
     if (game.leaguePoints > player.lp) {
       let difference = 100 - game.leaguePoints;
       LPDiff = player.lp + difference;
+      LPDiff *= -1; // need to change to negative number for below to work
     }
 
-    player.dailyGains -= LPDiff;
+    player.dailyGains += LPDiff;
 
     let positiveStreak = player.streak * -1;
 
@@ -100,7 +101,7 @@ function checkWinLoss(game, player, client) {
        ┃ ┃┃ ┃╰━━━━╯
       ╭┛ ┃┃ ┗-╮
 
-      Total daily gains: ${player.dailyGains} lp
+      Total gains: ${player.dailyGains} lp
       Loss streak: ${positiveStreak}`);
 
     console.log('GAME LOST BY ' + player.playerName + '\n' + "HOMIE LOST " + (player.lp - game.leaguePoints) + ' LP!!');
