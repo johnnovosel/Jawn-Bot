@@ -41,20 +41,19 @@ export default async function initializePlayers(client) {
 
     for (let i = 0; i < playerArr.length; i++) {
       if (games[i] === null || games[i] === undefined) continue; //this dude hasn't played any ranked 5v5 games this season OR THERE was an error on api call so we can just wait 30 more seconds
-      // if (games[i].wins === playerArr[i].wins && games[i].losses === playerArr[i].losses) continue; // if there is no change in win loss
+      if (games[i].wins === playerArr[i].wins && games[i].losses === playerArr[i].losses) continue; // if there is no change in win loss
 
       // else we check the win loss and the div change
       checkWinLoss(games[i], playerArr[i], client, lossResponses, winResponses);
       // check tier / rank change
     }
 
-  }, 1000 * 4); // 30 seconds
+  }, 1000 * 30); // 30 seconds
 };
 
 // check if a player has played a game by checking if losses or wins in ranked 5v5 have increased
 function checkWinLoss(game, player, client, lossResponses, winResponses) {
 
-  game.wins -= 1;
   const channel = client.channels.cache.get(Config.testChannel);
 
   let LPDiff = game.leaguePoints - player.lp;
