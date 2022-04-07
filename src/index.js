@@ -3,9 +3,6 @@ import { Config } from "./Config.js";
 import LeagueListener from './leaguelistener/LeagueGameListener.js'
 import fs from 'fs';
 import { startTimer } from './commands/lookup.js';
-import startSearch from './wordleSolver.js';
-import assignRole from './AssignRole.js'
-import { channel } from 'diagnostics_channel';
 
 const client = new Client({
   intents: [

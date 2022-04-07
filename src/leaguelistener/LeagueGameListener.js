@@ -1,6 +1,8 @@
 import Summoner from './Summoner.js';
-const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
+import fetch from 'node-fetch';
 import { Config } from "../Config.js";
+import fs from 'fs';
+import makeBraille from './braileconverter.js';
 
 const playerArr = [
   new Summoner("4syrFzdJLlvBW920mWb0jhtyZ0hydmxHia1nhkVWjZvGr1S9q0iaBlBCID_bQSZgZTs1sUCVflD6kw", "Itkovi", "AtaRIHyOIWfo3h_mU9NR0i-yaTqplS4gMuOWZIT4yGoF7I8", "166687107073572864"),
@@ -26,6 +28,12 @@ export default async function initializePlayers(client) {
   }
   console.table(playerArr);
 
+  let s = fs.readFileSync("src\\leaguelistener\\winlossmedia\\winresponses.txt", 'utf-8');
+  let winResponses = s.split('\r\n');
+
+  s = fs.readFileSync("src\\leaguelistener\\winlossmedia\\lossresponses.txt", 'utf-8');
+  let lossResponses = s.split('\r\n');
+
   // start listening for any update in the players
   setInterval(async () => {
 
@@ -33,20 +41,21 @@ export default async function initializePlayers(client) {
 
     for (let i = 0; i < playerArr.length; i++) {
       if (games[i] === null || games[i] === undefined) continue; //this dude hasn't played any ranked 5v5 games this season OR THERE was an error on api call so we can just wait 30 more seconds
-      if (games[i].wins === playerArr[i].wins && games[i].losses === playerArr[i].losses) continue; // if there is no change in win loss
+      // if (games[i].wins === playerArr[i].wins && games[i].losses === playerArr[i].losses) continue; // if there is no change in win loss
 
       // else we check the win loss and the div change
-      checkWinLoss(games[i], playerArr[i], client);
+      checkWinLoss(games[i], playerArr[i], client, lossResponses, winResponses);
       // check tier / rank change
     }
 
-  }, 1000 * 30); // 30 seconds
+  }, 1000 * 4); // 30 seconds
 };
 
 // check if a player has played a game by checking if losses or wins in ranked 5v5 have increased
-function checkWinLoss(game, player, client) {
+function checkWinLoss(game, player, client, lossResponses, winResponses) {
 
-  const channel = client.channels.cache.get("125385898593484800");
+  game.wins -= 1;
+  const channel = client.channels.cache.get(Config.testChannel);
 
   let LPDiff = game.leaguePoints - player.lp;
 
@@ -87,8 +96,15 @@ function checkWinLoss(game, player, client) {
     player.dailyGains += LPDiff;
 
     let positiveStreak = player.streak * -1;
+    
+    let lossMessage = null;
 
-    channel.send(`
+    let statMessage = `\n\nTotal gains: ${player.dailyGains} lp\nLoss streak: ${positiveStreak}`;
+
+    let chance = Math.random();
+
+    if (chance < 0.22) {
+      lossMessage = `
       ⠀⠀⠀
       ⠀⠀┻-━━━━━━━━━┻╮
        ┃╭╮╭╮┃
@@ -99,10 +115,22 @@ function checkWinLoss(game, player, client) {
       ┃┃    ┃┏┻━━┻┓
       ╰┫ ╭╮ ┃┃ ${game.leaguePoints - player.lp} lp       ┃
        ┃ ┃┃ ┃╰━━━━╯
-      ╭┛ ┃┃ ┗-╮
+      ╭┛ ┃┃ ┗-╮`;
+    } else if (chance < .33) {
+      lossMessage =  `<@${player.discordID}> Try looking at your map more! This should help your blind ass...\n`;
+      lossMessage += makeBraille(lossResponses[(Math.floor(Math.random() * lossResponses.length))]) + `\n`;
+      lossMessage += makeBraille(`Total gains: ${player.dailyGains} lp`) + `\n`;
+      lossMessage += makeBraille(`Loss streak: ${positiveStreak}`) + `\n`;
+      lossMessage += makeBraille(`-${game.leaguePoints - player.lp} lp`);
+    } 
+    else {
+      lossMessage =  `<@${player.discordID}> `
+      lossMessage += lossResponses[(Math.floor(Math.random() * lossResponses.length))];
+      lossMessage += `\n\n-${game.leaguePoints - player.lp} lp`;
+      lossMessage += statMessage;
+    }
 
-      Total gains: ${player.dailyGains} lp
-      Loss streak: ${positiveStreak}`);
+    channel.send(`${lossMessage}`);
 
     console.log('GAME LOST BY ' + player.playerName + '\n' + "HOMIE LOST " + (player.lp - game.leaguePoints) + ' LP!!');
   }
@@ -111,9 +139,6 @@ function checkWinLoss(game, player, client) {
   player.wins = game.wins;
   player.losses = game.losses;
 }
-
-
-
 
 function checkTierRank() {
 
